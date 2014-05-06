@@ -1,47 +1,36 @@
-/*
- * 
- * This CSS file modified from a CSS file written for Ajaxterm by Anthony
- * Lesuisse and released into the public domain. His project homepage is at 
- * http://antony.lesuisse.org/software/ajaxterm/ . This modified file is as 
- * modified by Jonathan Hayward in 2009, http://JonathansCorner.com/ , and
- * released under your choice of the Artistic License, the GPL, and the MIT
- * license.
- * 
- * If you like the modifications, you might consider a link to
- * http://JonathansCorner.com/
- * 
- */
-
+pre
+    {
+    font-family: Verdana, sans-serif;
+    }
 pre.stat {
-    margin: 0px;
-    padding: 4px;
-    display: block;
-    font-family: Verdana, sans;
-    white-space: pre;
-    color: #302000;
+	margin: 0px;
+	padding: 4px;
+	display: block;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    top: 0;
+	white-space: pre;
+	color: #302000;
 }
 pre.stat span {
-    padding: 0px;
+	padding: 0px;
 }
 pre.stat .on {
-    background-color: #080;
-    /* font-weight: bold; */
-    color: white;
-    cursor: pointer;
+	cursor: pointer;
 }
 pre.stat .off {
-    background-color: #888;
-    /* font-weight: bold; */
-    color: white;
-    cursor: pointer;
+	cursor: pointer;
 }
 pre.term {
-    margin: 0px;
-    padding: 4px;
-    display: block;
-    font-family: Verdana, sans;
+	margin: 0px;
+	padding: 4px;
+	display: block;
+    font-family: Verdana, sans-serif;
     font-weight: normal;
-    white-space: pre;
+    letter-spacing: 1px;
+    line-height: 2em;
+	white-space: pre;
     color: black;
 }
 /* pre.term span.f0  { color: #000; } */
@@ -61,7 +50,7 @@ pre.term span.f13 { color: #808; }
 pre.term span.f14 { color: #088; }
 pre.term span.f15 { color: #888; }
 /* pre.term span.b0  { background-color: #000; } */
-pre.term span.b1  { background-color: #000; }
+pre.term span.b1  { background-color: #000; color: #fff; }
 pre.term span.b2  { background-color: #0b0; }
 pre.term span.b3  { background-color: #bb0; }
 pre.term span.b4  { background-color: #00b; }
@@ -69,10 +58,16 @@ pre.term span.b5  { background-color: #b0b; }
 pre.term span.b6  { background-color: #0bb; }
 pre.term span.b7  { background-color: #bbb; }
 
-body {
+span.underscore
+    {
+    color: silver;
+    }
+
+body
+    {
     background-color: white;
-    font-weight: lighter;
-}
+    font-family: Verdana, sans;
+    }
 #term {
-    float: left;
+	float: left;
 }

@@ -1,6 +1,7 @@
 ajaxterm={};
 ajaxterm.Terminal_ctor=function(id,width,height) {
 	var ie=0;
+    var SWITCH_BETWEEN_PROPORTIONAL_AND_MONOSPACE = 0;
 	if(window.ActiveXObject)
 		ie=1;
 	var sid=""+Math.round(Math.random()*1000000000);
@@ -9,6 +10,7 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 	var buf="";
 	var timeout;
 	var error_timeout;
+    var is_proportional = 1;
 	var keybuf=[];
 	var sending=0;
 	var rmax=1;
@@ -16,9 +18,10 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 	var div=document.getElementById(id);
 	var dstat=document.createElement('pre');
 	var sled=document.createElement('span');
-	var opt_get=document.createElement('a');
 	var opt_color=document.createElement('a');
+	var opt_get=document.createElement('a');
 	var opt_paste=document.createElement('a');
+    var opt_proportional=document.createElement('a');
 	var sdebug=document.createElement('span');
 	var dterm=document.createElement('div');
 
@@ -41,12 +44,39 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 	}
 	function do_color(event) {
 		var o=opt_color.className=(opt_color.className=='off')?'on':'off';
+        var elements = getElementsByClassName("underscore");
 		if(o=='on')
+            {
 			query1=query0+"&c=1&k=";
+            // for(var i = 0; i < elements.length; ++i)
+                // elements[i].style.color = "silver";
+            }
 		else
+            {
 			query1=query0+"&k=";
+            // for(var i = 0; i < elements.length; ++i)
+                // elements[i].style.color = "black";
+            }
 		debug('Color '+opt_color.className);
+
 	}
+    function do_proportional(event)
+        {
+        if (is_proportional)
+            {
+            document.body.style.fontFamily = "monospace";
+            document.getElementById("stat").style.fontFamily = "monospace";
+            document.getElementById("termpre").style.fontFamily = "monospace";
+            is_proportional = 0;
+            }
+        else
+            {
+            document.body.style.fontFamily = "Verdana, sans";
+            document.getElementById("stat").style.fontFamily = "Verdana, sans";
+            document.getElementById("termpre").style.fontFamily = "Verdana, sans";
+            is_proportional = 1;
+            }
+        }
 	function mozilla_clipboard() {
 		 // mozilla sucks
 		try {
@@ -92,7 +122,6 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 		}
 	}
 	function update() {
-//		debug("ts: "+((new Date).getTime())+" rmax:"+rmax);
 		if(sending==0) {
 			sending=1;
 			sled.className='on';
@@ -112,7 +141,6 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 			}
 			r.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 			r.onreadystatechange = function () {
-//				debug("xhr:"+((new Date).getTime())+" state:"+r.readyState+" status:"+r.status+" statusText:"+r.statusText);
 				if (r.readyState==4) {
 					if(r.status==200) {
 						window.clearTimeout(error_timeout);
@@ -122,8 +150,6 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 								Sarissa.updateContentFromNode(de, dterm);
 							} else {
 								Sarissa.updateContentFromNode(de, dterm);
-//								old=div.firstChild;
-//								div.replaceChild(de,old);
 							}
 							rmax=100;
 						} else {
@@ -156,10 +182,6 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 	}
 	function keypress(ev) {
 		if (!ev) var ev=window.event;
-//		s="kp keyCode="+ev.keyCode+" which="+ev.which+" shiftKey="+ev.shiftKey+" ctrlKey="+ev.ctrlKey+" altKey="+ev.altKey;
-//		debug(s);
-//		return false;
-//		else { if (!ev.ctrlKey || ev.keyCode==17) { return; }
 		var kc;
 		var k="";
 		if (ev.keyCode)
@@ -220,7 +242,6 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 				k=String.fromCharCode(kc);
 		}
 		if(k.length) {
-//			queue(encodeURIComponent(k));
 			if(k=="+") {
 				queue("%2B");
 			} else {
@@ -235,8 +256,6 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 	function keydown(ev) {
 		if (!ev) var ev=window.event;
 		if (ie) {
-//			s="kd keyCode="+ev.keyCode+" which="+ev.which+" shiftKey="+ev.shiftKey+" ctrlKey="+ev.ctrlKey+" altKey="+ev.altKey;
-//			debug(s);
 			o={9:1,8:1,27:1,33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1,45:1,46:1,112:1,
 			113:1,114:1,115:1,116:1,117:1,118:1,119:1,120:1,121:1,122:1,123:1};
 			if (o[ev.keyCode] || ev.ctrlKey || ev.altKey) {
@@ -254,18 +273,28 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 		opt_color.className='on';
 		opt_add(opt_get,'GET');
 		opt_add(opt_paste,'Paste');
+        if (SWITCH_BETWEEN_PROPORTIONAL_AND_MONOSPACE)
+            {
+            opt_add(opt_proportional,'Proportional');
+            }
+        opt_proportional.className='on';
+        // dstat.appendChild(document.createTextNode("<br />"));
+        dstat.appendChild(document.createElement("br"));
 		dstat.appendChild(sdebug);
 		dstat.className='stat';
+        dstat.id='stat';
 		div.appendChild(dstat);
 		div.appendChild(dterm);
 		if(opt_color.addEventListener) {
 			opt_get.addEventListener('click',do_get,true);
 			opt_color.addEventListener('click',do_color,true);
 			opt_paste.addEventListener('click',do_paste,true);
+            opt_proportional.addEventListener('click', do_proportional, true);
 		} else {
 			opt_get.attachEvent("onclick", do_get);
 			opt_color.attachEvent("onclick", do_color);
 			opt_paste.attachEvent("onclick", do_paste);
+            opt_proportional.attachEvent("onclick", do_proportional);
 		}
 		document.onkeypress=keypress;
 		document.onkeydown=keydown;
@@ -276,4 +305,3 @@ ajaxterm.Terminal_ctor=function(id,width,height) {
 ajaxterm.Terminal=function(id,width,height) {
 	return new this.Terminal_ctor(id,width,height);
 }
-
